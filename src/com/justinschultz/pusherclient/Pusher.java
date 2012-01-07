@@ -1,6 +1,7 @@
 package com.justinschultz.pusherclient;
 
-/*	Copyright (C) 2012 Justin Schultz
+/*	
+ *  Copyright (C) 2012 Justin Schultz
  *  JavaPusherClient, a Pusher (http://pusherapp.com) client for Java
  *  
  *  http://justinschultz.com/
@@ -22,7 +23,7 @@ package com.justinschultz.pusherclient;
 import java.net.URI;
 import java.util.HashMap;
 
-import org.json.*;
+import org.json.JSONObject;
 
 import com.justinschultz.websocket.WebSocket;
 import com.justinschultz.websocket.WebSocketConnection;
@@ -89,31 +90,18 @@ public class Pusher {
 
 	private void sendSubscribeMessage(Channel c) {
 		JSONObject data = new JSONObject();
-		send("pusher:subscribe", data, c.channelName);
+		c.send("pusher:subscribe", data);
 	}
 
 	private void sendUnsubscribeMessage(Channel c) {
 		JSONObject data = new JSONObject();
-		send("pusher:unsubscribe", data, c.channelName);
+		c.send("pusher:unsubscribe", data);
 	}
 	
 	public void send(String event_name, JSONObject data) {
 		JSONObject message = new JSONObject();
 
 		try {
-			message.put("event", event_name);
-			message.put("data", data);
-			webSocket.send(message.toString());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void send(String event_name, JSONObject data, String channel) {
-		JSONObject message = new JSONObject();
-
-		try {
-			data.put("channel", channel);
 			message.put("event", event_name);
 			message.put("data", data);
 			webSocket.send(message.toString());

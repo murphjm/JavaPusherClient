@@ -1,6 +1,7 @@
 package com.justinschultz.pusherclient;
 
-/*	Copyright (C) 2012 Justin Schultz
+/*	
+ *  Copyright (C) 2012 Justin Schultz
  *  JavaPusherClient, a Pusher (http://pusherapp.com) client for Java
  *  
  *  http://justinschultz.com/
