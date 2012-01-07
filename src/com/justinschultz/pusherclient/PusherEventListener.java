@@ -1,6 +1,11 @@
-/*
- *  Copyright (C) 2011 Roderick Baier
+package com.justinschultz.pusherclient;
+
+/*	Copyright (C) 2012 Justin Schultz
+ *  JavaPusherClient, a Pusher (http://pusherapp.com) client for Java
  *  
+ *  http://justinschultz.com/
+ *  http://publicstaticdroidmain.com/
+ * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
@@ -14,25 +19,8 @@
  *  limitations under the License. 
  */
 
-/*
- * 09/02/2011 - Emory Myers - 	added the isConnected method
- */
-
-package com.justinschultz.WebSocket;
-
-public interface WebSocket {
-	public void setEventHandler(WebSocketEventHandler eventHandler);
-
-	public WebSocketEventHandler getEventHandler();
-
-	public void connect() throws WebSocketException;
-
-	public void send(String data) throws WebSocketException;
-
-	// public void send(byte[] data)
-	// throws WebSocketException;
-
-	public void close() throws WebSocketException;
-
-	public boolean isConnected();
+public interface PusherEventListener {
+	public void onConnect();
+	public void onMessage(String message);
+	public void onDisconnect();
 }

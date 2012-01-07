@@ -14,7 +14,7 @@
  *  limitations under the License. 
  */
 
-package com.justinschultz.WebSocket;
+package com.justinschultz.websocket;
 
 import java.io.IOException;
 import java.io.InputStream;

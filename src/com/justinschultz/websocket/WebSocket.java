@@ -14,12 +14,18 @@
  *  limitations under the License. 
  */
 
-package com.justinschultz.WebSocket;
+package com.justinschultz.websocket;
 
+public interface WebSocket {
+	public void setEventHandler(WebSocketEventHandler eventHandler);
 
-public interface WebSocketEventHandler
-{
-	public void onOpen();
-	public void onMessage(WebSocketMessage message);
-	public void onClose();
+	public WebSocketEventHandler getEventHandler();
+
+	public void connect() throws WebSocketException;
+
+	public void send(String data) throws WebSocketException;
+
+	public void close() throws WebSocketException;
+
+	public boolean isConnected();
 }

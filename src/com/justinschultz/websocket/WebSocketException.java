@@ -14,7 +14,7 @@
  *  limitations under the License. 
  */
 
-package com.justinschultz.WebSocket;
+package com.justinschultz.websocket;
 
 
 public class WebSocketException
