@@ -1,4 +1,4 @@
-package com.justinschultz.tests;
+package com.justinschultz.examples;
 
 /*	
  *  Copyright (C) 2012 Justin Schultz
@@ -20,11 +20,9 @@ package com.justinschultz.tests;
  *  limitations under the License. 
  */
 
-import org.json.JSONObject;
-
-import com.justinschultz.pusherclient.ChannelInterfaceListener;
+import com.justinschultz.pusherclient.ChannelListener;
 import com.justinschultz.pusherclient.Pusher;
-import com.justinschultz.pusherclient.PusherEventListener;
+import com.justinschultz.pusherclient.PusherListener;
 import com.justinschultz.pusherclient.Pusher.Channel;
 
 public class PusherTest {
@@ -33,18 +31,16 @@ public class PusherTest {
 	private static Pusher pusher;
 	
 	public static void main(String[] args) {	
-		PusherEventListener eventListener = new PusherEventListener() {
+		PusherListener eventListener = new PusherListener() {
 			Channel channel;
 			
 			@Override
-			public void onConnect() {
-				System.out.println("Pusher connected.");
+			public void onConnect(String socketId) {
+				System.out.println("Pusher connected. Socket Id is: " + socketId);
 				channel = pusher.subscribe(PUSHER_CHANNEL);
 				System.out.println("Subscribed to channel: " + channel);
 				
-				channel.send("client-test", new JSONObject()); // Send bogus Json
-				channel.bind("test-bind-event", new ChannelInterfaceListener() {
-					
+				channel.bind("price-updated", new ChannelListener() {
 					@Override
 					public void onMessage(String message) {
 						System.out.println("Received bound channel message: " + message);

@@ -20,8 +20,8 @@ package com.justinschultz.pusherclient;
  *  limitations under the License. 
  */
 
-public interface PusherEventListener {
-	public void onConnect();
+public interface PusherListener {
+	public void onConnect(String socketId);
 	public void onMessage(String message);
 	public void onDisconnect();
 }

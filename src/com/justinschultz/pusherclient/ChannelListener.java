@@ -20,6 +20,6 @@ package com.justinschultz.pusherclient;
  *  limitations under the License. 
  */
 
-public interface ChannelInterfaceListener {
+public interface ChannelListener {
 	public void onMessage(String message);
 }
