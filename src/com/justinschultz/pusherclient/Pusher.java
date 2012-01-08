@@ -169,9 +169,9 @@ public class Pusher {
 	}
 
 	private void dispatchChannelEvent(JSONObject jsonMessage) {
-		Set<Map.Entry<String, Channel>> set = channels.entrySet();
+		Set<Map.Entry<String, Channel>> channelSet = channels.entrySet();
 
-		for (Map.Entry<String, Channel> channelEntry : set) {
+		for (Map.Entry<String, Channel> channelEntry : channelSet) {
 			// If message contains this channel name
 			if (jsonMessage.toString().contains(channelEntry.getKey())) {
 				Channel c = channelEntry.getValue();
