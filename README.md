@@ -33,15 +33,15 @@ Web Site: [Public Static Droid Main](http://publicstaticdroidmain.com/)
 			System.out.println("Pusher disconnected.");
 		}
 	};
-## Connecting to Pusher
+### Connecting to Pusher
 	Pusher pusher = new Pusher(YOUR_API_KEY, PusherListener);   
 	pusher.connect();  
-## Channels
+### Channels
 	channel = pusher.subscribe(PUSHER_CHANNEL);  
 	 
-## Triggering Events
+### Triggering Events
 	channel.send("trigger-event", new JSONObject()); 
-## Binding to Events
+### Binding to Events
 	channel.bind("price-updated", new ChannelListener() {  
 		@Override  
 		public void onMessage(String message) {  
