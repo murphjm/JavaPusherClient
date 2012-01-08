@@ -20,6 +20,8 @@ package com.justinschultz.examples;
  *  limitations under the License. 
  */
 
+import org.json.JSONObject;
+
 import com.justinschultz.pusherclient.ChannelListener;
 import com.justinschultz.pusherclient.Pusher;
 import com.justinschultz.pusherclient.PusherListener;
@@ -39,6 +41,7 @@ public class PusherTest {
 				System.out.println("Pusher connected. Socket Id is: " + socketId);
 				channel = pusher.subscribe(PUSHER_CHANNEL);
 				System.out.println("Subscribed to channel: " + channel);
+				channel.send("client-test", new JSONObject());
 				
 				channel.bind("price-updated", new ChannelListener() {
 					@Override
