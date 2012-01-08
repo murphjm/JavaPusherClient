@@ -6,7 +6,7 @@ Web Site: [Public Static Droid Main](http://publicstaticdroidmain.com/)
 
 ## Examples
 `  
-PusherListener eventListener = new PusherListener() {  
+	PusherListener eventListener = new PusherListener() {  
 	Channel channel;
 	
 	@Override
@@ -36,14 +36,12 @@ PusherListener eventListener = new PusherListener() {
 };`
 ## Connecting to Pusher
 `
-Pusher pusher = new Pusher(YOUR_API_KEY, PusherListener);  
-pusher.connect();  
+	Pusher pusher = new Pusher(YOUR_API_KEY, PusherListener);  
+	pusher.connect();  
 `
 ## Channels
-`
-channel = pusher.subscribe(PUSHER_CHANNEL);  
-channel.send("client-test", new JSONObject());  
-`
+	channel = pusher.subscribe(PUSHER_CHANNEL);  
+	channel.send("client-test", new JSONObject());  
 ## Triggering Events
 
 ## Binding to Events
