@@ -22,6 +22,7 @@ package com.justinschultz.tests;
 
 import org.json.JSONObject;
 
+import com.justinschultz.pusherclient.ChannelInterfaceListener;
 import com.justinschultz.pusherclient.Pusher;
 import com.justinschultz.pusherclient.PusherEventListener;
 import com.justinschultz.pusherclient.Pusher.Channel;
@@ -40,7 +41,15 @@ public class PusherTest {
 				System.out.println("Pusher connected.");
 				channel = pusher.subscribe(PUSHER_CHANNEL);
 				System.out.println("Subscribed to channel: " + channel);
+				
 				channel.send("client-test", new JSONObject()); // Send bogus Json
+				channel.bind("test-bind-event", new ChannelInterfaceListener() {
+					
+					@Override
+					public void onMessage(String message) {
+						System.out.println("Received bound channel message: " + message);
+					}
+				});
 			}
 
 			@Override
