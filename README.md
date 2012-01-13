@@ -5,10 +5,7 @@ Web Site: [Public Static Droid Main](http://publicstaticdroidmain.com/)
 [Pusher] (http://www.pusherapp.com) is a push notification service that uses [WebSockets] (http://en.wikipedia.org/wiki/WebSocket) for relaying messages back and forth between clients.  This allows real time messaging between a diverse range of applications running on Web browsers, Android devices and now any other place you use Java.
 
 ## Examples
-### Connecting to Pusher
-	Pusher pusher = new Pusher(YOUR_API_KEY, eventListener);   
-	pusher.connect();  
-### Listening for Pusher Events
+### Creating a Pusher Event Listener
 	PusherListener eventListener = new PusherListener() {  
 		Channel channel;
 		
@@ -37,13 +34,15 @@ Web Site: [Public Static Droid Main](http://publicstaticdroidmain.com/)
 			System.out.println("Pusher disconnected.");
 		}
 	};
-
+### Connecting to Pusher
+	Pusher pusher = new Pusher(YOUR_API_KEY);   
+	pusher.setPusherListener(eventListener);
+	pusher.connect();  
 ### Channels
 	channel = pusher.subscribe(PUSHER_CHANNEL);  
-	 
 ### Triggering Events
 	channel.send("trigger-event", new JSONObject()); 
-### Binding to Events
+#### Binding to Events
 	channel.bind("price-updated", new ChannelListener() {  
 		@Override  
 		public void onMessage(String message) {  

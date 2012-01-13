@@ -28,6 +28,7 @@ import org.json.JSONObject;
 import com.justinschultz.websocket.WebSocket;
 import com.justinschultz.websocket.WebSocketConnection;
 import com.justinschultz.websocket.WebSocketEventHandler;
+import com.justinschultz.websocket.WebSocketException;
 import com.justinschultz.websocket.WebSocketMessage;
 
 public class Pusher {
@@ -38,22 +39,22 @@ public class Pusher {
 	private final String PREFIX = "ws://";
 
 	private WebSocket webSocket;
-	private Thread pusherThread;
 	private String apiKey;
 	private final HashMap<String, Channel> channels;
 
 	private PusherListener pusherEventListener;
 
-	public Pusher(String key, PusherListener listener) {
+	public Pusher(String key) {
 		apiKey = key;
-		pusherEventListener = listener;
 		channels = new HashMap<String, Channel>();
+	}
+	
+	public void setPusherListener(PusherListener listener) {
+		pusherEventListener = listener;
 	}
 
 	public void disconnect() {
 		try {
-			pusherThread.interrupt();
-			pusherThread = null;
 			webSocket.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -80,7 +81,22 @@ public class Pusher {
 
 		if (webSocket != null && webSocket.isConnected()) {
 			try {
-				sendPrivateSubscribeMessage(c, authToken);
+				sendSubscribeMessage(c, authToken);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		channels.put(channelName, c);
+		return c;
+	}
+	
+	public Channel subscribe(String channelName, String authToken, int userId) {
+		Channel c = new Channel(channelName);
+
+		if (webSocket != null && webSocket.isConnected()) {
+			try {
+				sendSubscribeMessage(c, authToken, userId);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -109,10 +125,22 @@ public class Pusher {
 		c.send("pusher:subscribe", data);
 	}
 	
-	private void sendPrivateSubscribeMessage(Channel c, String authToken) {
+	private void sendSubscribeMessage(Channel c, String authToken) {
 		JSONObject data = new JSONObject();
 		try {
 			data.put("auth", authToken);
+		} catch(Exception ex) {
+			
+		}
+		
+		c.send("pusher:subscribe", data);
+	}
+	
+	private void sendSubscribeMessage(Channel c, String authToken, int userId) {
+		JSONObject data = new JSONObject();
+		try {
+			data.put("auth", authToken);
+			data.put("channel_data", new JSONObject().put("user_id", userId));
 		} catch(Exception ex) {
 			
 		}
@@ -174,27 +202,9 @@ public class Pusher {
 					pusherEventListener.onDisconnect();
 				}
 			});
-
-			// Reconnect thread
-			pusherThread = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					boolean interrupted = false;
-					while (!interrupted) {
-						try {
-							Thread.sleep(PUSHER_SLEEP_TIME_MS);
-							if (!webSocket.isConnected())
-								webSocket.connect();
-						} catch (InterruptedException e) {
-							interrupted = true;
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			});
-
-			pusherThread.start();
+			
+			webSocket.connect();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -41,7 +41,7 @@ public class PusherTest {
 				System.out.println("Pusher connected. Socket Id is: " + socketId);
 				channel = pusher.subscribe(PUSHER_CHANNEL);
 				System.out.println("Subscribed to channel: " + channel);
-				channel.send("client-test", new JSONObject());
+				channel.send("client-event-test", new JSONObject());
 				
 				channel.bind("price-updated", new ChannelListener() {
 					@Override
@@ -62,7 +62,8 @@ public class PusherTest {
 			}
 		};
 		
-		pusher = new Pusher(PUSHER_API_KEY, eventListener);
+		pusher = new Pusher(PUSHER_API_KEY);
+		pusher.setPusherListener(eventListener);
 		pusher.connect();
 	}
 }
