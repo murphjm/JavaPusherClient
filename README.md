@@ -38,11 +38,18 @@ Web Site: [Public Static Droid Main](http://publicstaticdroidmain.com/)
 	Pusher pusher = new Pusher(YOUR_API_KEY);   
 	pusher.setPusherListener(eventListener);
 	pusher.connect();  
-### Channels
+### Subscribing to Channels
+	// Public Channel
 	channel = pusher.subscribe(PUSHER_CHANNEL);  
-### Triggering Events
+	
+	// Private Channel
+	channel = pusher.subscribe(PUSHER_CHANNEL, AUTH_TOKEN);  
+	
+	// Presence Channel
+	channel = pusher.subscribe(PUSHER_CHANNEL, AUTH_TOKEN, USER_ID);  	
+### Triggering Channel Events
 	channel.send("trigger-event", new JSONObject()); 
-#### Binding to Events
+### Binding to Channel Events
 	channel.bind("price-updated", new ChannelListener() {  
 		@Override  
 		public void onMessage(String message) {  
