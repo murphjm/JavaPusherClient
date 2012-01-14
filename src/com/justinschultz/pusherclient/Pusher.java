@@ -28,12 +28,11 @@ import org.json.JSONObject;
 import com.justinschultz.websocket.WebSocket;
 import com.justinschultz.websocket.WebSocketConnection;
 import com.justinschultz.websocket.WebSocketEventHandler;
-import com.justinschultz.websocket.WebSocketException;
 import com.justinschultz.websocket.WebSocketMessage;
 
 public class Pusher {
-	protected static final long PUSHER_SLEEP_TIME_MS = 5000;
-	private final String VERSION = "1.8.3";
+	private static final String PUSHER_CLIENT = "java-android-client";
+	private final String VERSION = "1.11";
 	private final String HOST = "ws.pusherapp.com";
 	private final int WS_PORT = 80;
 	private final String PREFIX = "ws://";
@@ -49,10 +48,51 @@ public class Pusher {
 		channels = new HashMap<String, Channel>();
 	}
 	
-	public void setPusherListener(PusherListener listener) {
-		pusherEventListener = listener;
-	}
+	public void connect() {
+		String path = "/app/" + apiKey + "?client=" + PUSHER_CLIENT + "&version=" + VERSION;
 
+		try {
+			URI url = new URI(PREFIX + HOST + ":" + WS_PORT + path);
+			webSocket = new WebSocketConnection(url);
+			webSocket.setEventHandler(new WebSocketEventHandler() {
+				@Override
+				public void onOpen() { 
+					// Pusher's onOpen is invoked after we've received a 
+					// socket_id in onMessage()
+				}
+
+				@Override
+				public void onMessage(WebSocketMessage message) {
+					try {
+						JSONObject jsonMessage = new JSONObject(message.getText());
+						String event = jsonMessage.optString("event", null);
+						
+						if(event.equals("pusher:connection_established" ))
+						{
+							JSONObject data = new JSONObject(jsonMessage.getString("data"));
+							pusherEventListener.onConnect(data.getString("socket_id"));
+						} else {
+							pusherEventListener.onMessage(jsonMessage.toString());
+							dispatchChannelEvent(jsonMessage, event);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+
+				@Override
+				public void onClose() {
+					pusherEventListener.onDisconnect();
+				}
+			});
+			
+			webSocket.connect();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void disconnect() {
 		try {
 			webSocket.close();
@@ -60,7 +100,15 @@ public class Pusher {
 			e.printStackTrace();
 		}
 	}
-
+	
+	public boolean isConnected() {
+		return webSocket.isConnected();
+	}
+	
+	public void setPusherListener(PusherListener listener) {
+		pusherEventListener = listener;
+	}
+	
 	public Channel subscribe(String channelName) {
 		Channel c = new Channel(channelName);
 
@@ -152,63 +200,6 @@ public class Pusher {
 		JSONObject data = new JSONObject();
 		c.send("pusher:unsubscribe", data);
 	}
-
-	public void send(String event_name, JSONObject data) {
-		JSONObject message = new JSONObject();
-
-		try {
-			message.put("event", event_name);
-			message.put("data", data);
-			webSocket.send(message.toString());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void connect() {
-		String path = "/app/" + apiKey + "?client=js&version=" + VERSION;
-
-		try {
-			URI url = new URI(PREFIX + HOST + ":" + WS_PORT + path);
-			webSocket = new WebSocketConnection(url);
-			webSocket.setEventHandler(new WebSocketEventHandler() {
-				@Override
-				public void onOpen() { 
-					// Pusher's onOpen is invoked after we've received a 
-					// socket_id in onMessage()
-				}
-
-				@Override
-				public void onMessage(WebSocketMessage message) {
-					try {
-						JSONObject jsonMessage = new JSONObject(message.getText());
-						String event = jsonMessage.optString("event", null);
-						
-						if(event.equals("pusher:connection_established" ))
-						{
-							JSONObject data = new JSONObject(jsonMessage.getString("data"));
-							pusherEventListener.onConnect(data.getString("socket_id"));
-						} else {
-							pusherEventListener.onMessage(jsonMessage.toString());
-							dispatchChannelEvent(jsonMessage, event);
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-
-				@Override
-				public void onClose() {
-					pusherEventListener.onDisconnect();
-				}
-			});
-			
-			webSocket.connect();
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 	
 	private void dispatchChannelEvent(JSONObject jsonMessage, String event) {
 		String channelName = jsonMessage.optString("channel", null);
@@ -219,6 +210,18 @@ public class Pusher {
 			
 			if(channelListener != null)
 				channelListener.onMessage(jsonMessage.toString());
+		}
+	}
+
+	public void send(String event_name, JSONObject data) {
+		JSONObject message = new JSONObject();
+
+		try {
+			message.put("event", event_name);
+			message.put("data", data);
+			webSocket.send(message.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
