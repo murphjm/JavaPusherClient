@@ -20,15 +20,14 @@ package com.justinschultz.pusherclient;
  *  limitations under the License.
  */
 
-import java.net.URI;
-import java.util.HashMap;
-
-import org.json.JSONObject;
-
 import com.justinschultz.websocket.WebSocket;
 import com.justinschultz.websocket.WebSocketConnection;
 import com.justinschultz.websocket.WebSocketEventHandler;
 import com.justinschultz.websocket.WebSocketMessage;
+import org.json.JSONObject;
+
+import java.net.URI;
+import java.util.HashMap;
 
 public class Pusher {
 	private static final String PUSHER_CLIENT = "java-android-client";
@@ -139,7 +138,7 @@ public class Pusher {
 		return c;
 	}
 
-	public Channel subscribe(String channelName, String authToken, int userId) {
+	public Channel subscribe(String channelName, String authToken, String userId) {
 		Channel c = new Channel(channelName);
 
 		if (webSocket != null && webSocket.isConnected()) {
@@ -184,11 +183,12 @@ public class Pusher {
 		c.send("pusher:subscribe", data);
 	}
 
-	private void sendSubscribeMessage(Channel c, String authToken, int userId) {
+	private void sendSubscribeMessage(Channel c, String authToken, String userId) {
 		JSONObject data = new JSONObject();
 		try {
 			data.put("auth", authToken);
-			data.put("channel_data", new JSONObject().put("user_id", userId));
+			String jsonChannelData = new JSONObject().put("user_id", userId).toString();
+			data.put("channel_data", jsonChannelData);
 		} catch(Exception ex) {
 
 		}
