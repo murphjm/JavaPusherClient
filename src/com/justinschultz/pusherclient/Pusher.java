@@ -138,6 +138,14 @@ public class Pusher {
 		return c;
 	}
 
+	public Channel subscribe(String channelName, String authToken, int userId) {
+		return subscribe(channelName, authToken, userId + "");
+	}
+
+	public Channel subscribe(String channelName, String authToken, long userId) {
+		return subscribe(channelName, authToken, userId + "");
+	}
+
 	public Channel subscribe(String channelName, String authToken, String userId) {
 		Channel c = new Channel(channelName);
 
